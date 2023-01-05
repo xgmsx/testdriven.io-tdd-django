@@ -1,1 +1,4 @@
-/notepad.txt
+__pycache__
+env
+venv
+*.sqlite3
