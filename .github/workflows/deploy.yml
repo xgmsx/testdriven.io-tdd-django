@@ -18,4 +18,5 @@ jobs:
         with:
           ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
           git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}/tdd-django
-          git_push_flags: '--force -vvv'
+          git_push_flags: '-vvv'
+          trace: '1'
