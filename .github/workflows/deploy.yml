@@ -40,6 +40,6 @@ jobs:
       - name: Push to dokku
         uses: dokku/github-action@master
         with:
-          git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
+          git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}/tdd-django
           ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
           deploy_docker_image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
