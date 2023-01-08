@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 
+import dj_database_url
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,14 +24,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.environ.get("SECRET_KEY", default="notverysecret")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = int(os.environ.get("DEBUG", default=0))
 
 # 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
 # For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(" ")
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", default="127.0.0.1 localhost 0.0.0.0").split(" ")
 
 
 # Application definition
@@ -89,6 +92,10 @@ DATABASES = {
     }
 }
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
+db_from_env = dj_database_url.config(default=DATABASE_URL, conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -132,3 +139,10 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = 'movies.CustomUser'
+
+if not DEBUG:
+    REST_FRAMEWORK = {
+        "DEFAULT_RENDERER_CLASSES": (
+            "rest_framework.renderers.JSONRenderer",
+        )
+    }
