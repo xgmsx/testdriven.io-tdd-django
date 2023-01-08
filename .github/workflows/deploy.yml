@@ -4,42 +4,15 @@ on:
   push:
     branches: [master]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
 jobs:
-  deploy:
+  deploy-production:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Log in to the Container registry
-        uses: docker/login-action@master
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@master
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@master
-        with:
-          context: app
-          file: app/Dockerfile.prod
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Push to dokku
+      - name: Deploy Production
         uses: dokku/github-action@master
         with:
-          git_remote_url: ${{ secrets.DOKKU_REMOTE_URL }}
           ssh_private_key: ${{ secrets.DOKKU_SSH_PRIVATE_KEY }}
-          deploy_docker_image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          git_remote_url: {{ secrets.DOKKU_REMOTE_URL }}/teikei-admin
